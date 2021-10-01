@@ -12,12 +12,13 @@ let package = Package(
             targets: ["Meals"]),
     ],
     dependencies: [
-        .package(name: "AutomatedFetcher", url: "https://github.com/helsingborg-stad/spm-automated-fetcher", from: "0.1.0")
+        .package(name: "AutomatedFetcher", url: "https://github.com/helsingborg-stad/spm-automated-fetcher", from: "0.1.0"),
+        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.3.2")
     ],
     targets: [
         .target(
             name: "Meals",
-            dependencies: ["AutomatedFetcher"]),
+            dependencies: ["AutomatedFetcher","SwiftSoup"]),
         .testTarget(
             name: "MealsTests",
             dependencies: ["Meals"]),

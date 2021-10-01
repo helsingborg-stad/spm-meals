@@ -1,7 +1,6 @@
 import Foundation
 import Combine
 import SwiftSoup
-import Meals
 
 /// Protocol describing a navigation link between a child and a parent, from county to school
 protocol SkolmatenNavigationLink {
