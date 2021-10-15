@@ -57,10 +57,10 @@ struct FoodView: View {
 ```
 
 ## Skolmaten.se service
-Implements MealService from the swift package `Meals`  and develivers meal information from Skolmaten.se via thier RSS-endpoint.
+Implements MealService from the swift package `Meals` and develivers meal information from Skolmaten.se via thier RSS-endpoint.
 
 The `School` object implements the `MealService` protocol. You can provide the information to a school manually or by searching using either `Skolmaten.first` or `Skolmaten.filter`.
-Once you have a `School`  you can us it together with a `Meals` instance or create your own implementation using `School.fetchMealsPublisher(filter:offset:limit:)` method.  
+Once you have a `School` you can us it together with a `Meals` instance or create your own implementation using `School.fetchMealsPublisher(filter:offset:limit:)` method.  
 
 ```swift 
 Skolmaten.first(county:"Skåne", municipality:"Helsingborg", school:"Råå förskola").sink { completion in
@@ -74,9 +74,50 @@ Skolmaten.first(county:"Skåne", municipality:"Helsingborg", school:"Råå förs
 }
 ```
 
+
+## Mashie service
+Implements MealService from the swift package `Meals` and develivers meal information from the Mashie online service. You can use the `MashieEaterie` as a meal service in the `Meals` library.
+
+```swift 
+/// find the organization id, it should be in the url
+let organization = "cb776b5e"
+
+/// use the full "mpi" url 
+let url = URL(string: "https://mpi.mashie.com/public/menu/helsingborg+vof/\(organization)?country=se")!
+
+/// The service scrapes the mashie website for information so you need to add the parameters for each meal yourself. Each paramter is compared to to a meal title in the HTML. 
+let parameters:[MashieEaterie.Parameter] = [
+    .init(occation:.lunch,  foodType: .undecided,   title: "Dagens middag", tags:[]),
+    .init(occation:.lunch,  foodType: .undecided,   title: "Dagens middag mos", tags:[.easyToChew]),
+    .init(occation:.lunch,  foodType: .undecided,   title: "Dagens alternativ", tags:[.alternative]),
+    .init(occation:.lunch,  foodType: .undecided,   title: "Dagens alternativ mos", tags:[.alternative,.easyToChew]),
+    .init(occation:.lunch,  foodType: .undecided,   title: "Dagens gröna", tags:[.vegetarian]),
+    .init(occation:.lunch,  foodType: .undecided,   title: "Dagens gröna mos", tags:[.vegetarian,.easyToChew]),
+    .init(occation:.lunch,  foodType: .dessert,     title: "Dessert"),
+    .init(occation:.dinner, foodType: .undecided,   title: "Kvällsmat", tags:[]),
+    .init(occation:.dinner, foodType: .undecided,   title: "Kvällsmat mos", tags:[.easyToChew]),
+    .init(occation:.dinner, foodType: .undecided,   title: "Kvällsmat avvikelse veg", tags:[.vegetarian]),
+    .init(occation:.dinner, foodType: .undecided,   title: "Kvällsmat avvikelse veg mos", tags:[.vegetarian,.easyToChew]),
+    .init(occation:.dinner, foodType: .undecided,   title: "Kvällens enkla", tags:[.simple]),
+    .init(occation:.dinner, foodType: .undecided,   title: "Kvällens enkla mos", tags:[.simple,.easyToChew])
+]
+let mashie = MashieEaterie(url: url, orgId: organization, parameters: parameters)
+
+mashie.fetchMealsPublisher().sink { compl in
+    switch compl {
+    case .failure(let error): debugPrint(error)
+    case .finished: break;
+    }
+} receiveValue: { meals in
+    XCTAssert(meals.count > 0)
+    expectation.fulfill()
+}
+```
+
+
 ## TODO
 
-- [ ] add list of available services
+- [x] add list of available services
 - [x] code-documentation
-- [ ] write tests
-- [ ] complete package documentation
+- [x] write tests
+- [x] complete package documentation
