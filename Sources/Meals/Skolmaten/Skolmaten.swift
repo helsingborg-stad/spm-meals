@@ -67,6 +67,12 @@ public class Skolmaten {
         case searchResultsEmpty
         /// Insufficient input
         case insufficientInput
+        /// Bad county name
+        case badCounty
+        /// Bad municipality name
+        case badMunicipality
+        /// Bad school name
+        case badSchool
     }
     /// Represents a school and how to fetch meal information from the skolmaten.se rss feed.
     public struct School : Codable, Identifiable, Equatable, MealService {
