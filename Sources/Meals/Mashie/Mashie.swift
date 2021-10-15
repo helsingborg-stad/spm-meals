@@ -1,7 +1,6 @@
 import Foundation
 import Combine
 import SwiftSoup
-import Meals
 
 public struct MashieEaterie : MealService {
     enum MashieEaterieError : Error {
