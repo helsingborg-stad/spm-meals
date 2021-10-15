@@ -229,13 +229,31 @@ public class Skolmaten {
     ///   - school: first school by value
     /// - Returns: a `School`-publisher
     /// - Note: Use sparsely since each request makes a full crawl from skolmaten.se to the municipality website.
-    @available(iOS 14.0, *) public static func first(county:String, municipality:String, school:String) -> AnyPublisher<School,Error> {
-        County.fetchCountiesPublisher
-            .flatMap { $0.first(where: { $0.title.contains(county) }).publisher }
+    public static func first(county:String, municipality:String, school:String) -> AnyPublisher<School,Error> {
+        let county = county.lowercased()
+        let municipality = municipality.lowercased()
+        let school = school.lowercased()
+        return County.fetchCountiesPublisher
+            .tryMap({ counties -> Skolmaten.County in
+                guard let m = counties.first(where: { $0.title.lowercased().contains(county) }) else {
+                    throw SkolmatenError.badCounty
+                }
+                return m
+            })
             .flatMap { $0.fetchMunicipalitiesPublisher }
-            .flatMap { $0.first(where: { $0.title.contains(municipality) }).publisher }
+            .tryMap({ municipalites -> Skolmaten.Municipality in
+                guard let m = municipalites.first(where: { $0.title.lowercased().contains(municipality) }) else {
+                    throw SkolmatenError.badMunicipality
+                }
+                return m
+            })
             .flatMap { $0.fetchSchoolsPublisher }
-            .flatMap { $0.first(where: { $0.title.contains(school) }).publisher }
+            .tryMap({ schools -> Skolmaten.School in
+                guard let m = schools.first(where: { $0.title.lowercased().contains(school) }) else {
+                    throw SkolmatenError.badSchool
+                }
+                return m
+            })
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
@@ -247,7 +265,9 @@ public class Skolmaten {
     ///   - school: all schools containing value (in parenting municipalities)
     /// - Returns: returns a [School]-publisher
     /// - Note: Use sparsely since each request makes a full crawl from skolmaten.se to each municipality website.
-    @available(iOS 14.0, *) public static func filter(county:String, municipality:String, school:String) -> AnyPublisher<[School],Error> {
+    @available(iOS 14.0, *)
+    @available(macOS 11.0, *)
+    public static func filter(county:String, municipality:String, school:String) -> AnyPublisher<[School],Error> {
         guard county.count > 2 && municipality.count > 2 && municipality.count > 2 else {
             return Fail(error:SkolmatenError.insufficientInput).eraseToAnyPublisher()
         }
