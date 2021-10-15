@@ -54,7 +54,7 @@ func fetchLink<Item:SkolmatenNavigationLink>(url:URL) -> AnyPublisher<[Item],Err
     .receive(on: DispatchQueue.main).eraseToAnyPublisher()
 }
 
-/// Skolmaten is a module for fetching meal information from Skolmaten.se. --- rewrite...
+/// Skolmaten is a library used for fetching meal information from Skolmaten.se.
 public class Skolmaten {
     /// RSS filter
     public enum Filter : String {
