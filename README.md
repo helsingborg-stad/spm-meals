@@ -76,7 +76,7 @@ Skolmaten.first(county:"Skåne", municipality:"Helsingborg", school:"Råå förs
 
 ## TODO
 
-- [_] add list of available services
+- [ ] add list of available services
 - [x] code-documentation
-- [_] write tests
-- [_] complete package documentation
+- [ ] write tests
+- [ ] complete package documentation
