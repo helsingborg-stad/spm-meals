@@ -109,8 +109,7 @@ mashie.fetchMealsPublisher().sink { compl in
     case .finished: break;
     }
 } receiveValue: { meals in
-    XCTAssert(meals.count > 0)
-    expectation.fulfill()
+    
 }
 ```
 
