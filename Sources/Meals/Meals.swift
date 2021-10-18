@@ -211,7 +211,7 @@ public class Meals : ObservableObject {
             dataSubject.send(Self.previewData)
             return
         }
-        if force == false && lastFetch.timeIntervalSinceNow < fetchInterval && dataSubject.value.isEmpty == false {
+        if force == false && automatedFetcher.shouldFetch == false && dataSubject.value.isEmpty == false {
             return
         }
         guard let service = service else { return}
