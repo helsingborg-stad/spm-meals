@@ -122,3 +122,4 @@ mashie.fetchMealsPublisher().sink { compl in
 - [x] code-documentation
 - [x] write tests
 - [x] complete package documentation
+- [ ] the `fetch` method should return a publisher, similar to what we did with the `spm-public-calendar` library 
