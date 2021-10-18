@@ -22,7 +22,8 @@ public class MyMealService : MealService {
 class StateManager {
     var meals:Meals
     init {
-        let meals = Meals(service: MyMealService(), fetchAutomatically: true, previewData: ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1")
+        let previewMode = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
+        let meals = Meals(service: MyMealService(), fetchAutomatically: true, previewData: previewMode)
     }
 }
 
@@ -79,13 +80,14 @@ Skolmaten.first(county:"Skåne", municipality:"Helsingborg", school:"Råå förs
 Implements MealService from the swift package `Meals` and develivers meal information from the Mashie online service. You can use the `MashieEaterie` as a meal service in the `Meals` library.
 
 ```swift 
-/// find the organization id, it should be in the url
+/// Find the organization id, it should be in the url
 let organization = "cb776b5e"
 
-/// use the full "mpi" url 
+/// Use the full "mpi" url 
 let url = URL(string: "https://mpi.mashie.com/public/menu/helsingborg+vof/\(organization)?country=se")!
 
-/// The service scrapes the mashie website for information so you need to add the parameters for each meal yourself. Each paramter is compared to to a meal title in the HTML. 
+/// The service scrapes the mashie website for information so you need to 
+/// add the parameters for each meal yourself. Each paramter is compared to to a meal title in the HTML. 
 let parameters:[MashieEaterie.Parameter] = [
     .init(occation:.lunch,  foodType: .undecided,   title: "Dagens middag", tags:[]),
     .init(occation:.lunch,  foodType: .undecided,   title: "Dagens middag mos", tags:[.easyToChew]),
