@@ -139,11 +139,11 @@ public extension Array where Element == Meal {
 /// Meals provides a common interface for meal services implementing the `MealService` protocol.
 public class Meals : ObservableObject {
     /// A subject that holds the most recently fetched meals from the provided meal service
-    private let dataSubject = CurrentValueSubject<[Meal],Never>([])
+    private let dataSubject = CurrentValueSubject<[Meal]?,Never>(nil)
     /// Pubisher storage
     private var publishers = Set<AnyCancellable>()
     /// Instance for managing automated fetches
-    private let automatedFetcher:AutomatedFetcher<[Meal]>
+    private let automatedFetcher:AutomatedFetcher<[Meal]?>
     
     /// Holds the last time the meals were fetched
     @Published public private(set) var lastFetch = Date()
@@ -161,7 +161,7 @@ public class Meals : ObservableObject {
     }
     
     /// A publisher holding the most recent fetched meals.
-    public let latest:AnyPublisher<[Meal],Never>
+    public let latest:AnyPublisher<[Meal]?,Never>
     /// The currently used service
     public var service:MealService? {
         didSet {
@@ -182,7 +182,7 @@ public class Meals : ObservableObject {
         self.fetchInterval = fetchInterval
         self.previewData = previewData
         latest = dataSubject.eraseToAnyPublisher()
-        automatedFetcher = AutomatedFetcher<[Meal]>(dataSubject, isOn: fetchAutomatically, timeInterval: fetchInterval)
+        automatedFetcher = AutomatedFetcher<[Meal]?>(dataSubject, isOn: fetchAutomatically, timeInterval: fetchInterval)
         automatedFetcher.triggered.sink { [weak self] in
             self?.fetch()
         }.store(in: &publishers)
@@ -197,10 +197,10 @@ public class Meals : ObservableObject {
     ///   - occation: on which occation the meal is served
     ///   - foodType: the type of food (`FoodType`)
     ///   - tags: tags further describing the meal.
-    /// - Returns: a non-failing [Meal] publisher
-    public func publisher(for date:Date = Date(), occation:Meal.Occasion? = nil, foodType:Meal.FoodType? = nil, tags:Set<Meal.Tag> = []) -> AnyPublisher<[Meal],Never> {
+    /// - Returns: a non-failing [Meal]? publisher
+    public func publisher(for date:Date = Date(), occation:Meal.Occasion? = nil, foodType:Meal.FoodType? = nil, tags:Set<Meal.Tag> = []) -> AnyPublisher<[Meal]?,Never> {
         dataSubject.map { meals in
-            meals.filtered(by: date, occation: occation, foodType: foodType, tags: tags)
+            meals?.filtered(by: date, occation: occation, foodType: foodType, tags: tags)
         }.eraseToAnyPublisher()
     }
     
@@ -211,7 +211,7 @@ public class Meals : ObservableObject {
             dataSubject.send(Self.previewData)
             return
         }
-        if force == false && automatedFetcher.shouldFetch == false && dataSubject.value.isEmpty == false {
+        if force == false && automatedFetcher.shouldFetch == false && dataSubject.value != nil {
             return
         }
         guard let service = service else { return}

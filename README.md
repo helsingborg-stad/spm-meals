@@ -42,6 +42,9 @@ struct FoodView: View {
             }
         }
         .onReceive(meals.publisher(occation:.lunch)) { val in
+            guard let val = val else {
+                return
+            }
             items = val
         }
     }
