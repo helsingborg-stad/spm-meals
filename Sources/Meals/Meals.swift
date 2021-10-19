@@ -198,9 +198,10 @@ public class Meals : ObservableObject {
     ///   - foodType: the type of food (`FoodType`)
     ///   - tags: tags further describing the meal.
     /// - Returns: a non-failing [Meal]? publisher
-    public func publisher(for date:Date = Date(), occation:Meal.Occasion? = nil, foodType:Meal.FoodType? = nil, tags:Set<Meal.Tag> = []) -> AnyPublisher<[Meal]?,Never> {
+    public func publisher(for date:Date? = nil, occation:Meal.Occasion? = nil, foodType:Meal.FoodType? = nil, tags:Set<Meal.Tag> = []) -> AnyPublisher<[Meal]?,Never> {
         dataSubject.map { meals in
-            meals?.filtered(by: date, occation: occation, foodType: foodType, tags: tags)
+            let date = date ?? Date()
+            return meals?.filtered(by: date, occation: occation, foodType: foodType, tags: tags)
         }.eraseToAnyPublisher()
     }
     
