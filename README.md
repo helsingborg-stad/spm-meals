@@ -125,4 +125,5 @@ mashie.fetchMealsPublisher().sink { compl in
 - [x] code-documentation
 - [x] write tests
 - [x] complete package documentation
-- [ ] the `fetch` method should return a publisher, similar to what we did with the `spm-public-calendar` library 
+- [ ] the `fetch` method should return a publisher, similar to what we did with the `spm-public-calendar` library
+- [ ] perhaps we should change so that the date supplided in the publisher method fetches information for that date instead of just filtering the last fetch. 
