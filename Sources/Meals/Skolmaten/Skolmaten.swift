@@ -99,7 +99,7 @@ public class Skolmaten {
         /// Used for fetching meals from Skolmaten.se. This function is used by `Meals`.
         /// - Returns: a `[Meal]` publisher
         public func fetchMealsPublisher() -> AnyPublisher<[Meal], Error> {
-            fetchMealsPublisher(filter: .days)
+            fetchMealsPublisher(filter: .days,offset: -7, limit: 14)
         }
         
         /// A method for fetching meals from Skolmaten.se
