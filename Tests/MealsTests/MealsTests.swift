@@ -21,6 +21,20 @@ final class MealsTests: XCTestCase {
         }.store(in: &cancellables)
         wait(for: [expectation], timeout: 20.0)
     }
+    func testGetMeals() {
+        let expectation = XCTestExpectation(description: "Mealstest")
+        let school = Skolmaten.School.init(url: URL(string: "https://skolmaten.se/raa-forskola/")!, title: "Råå förskola", parentURL: URL(string: "https://skolmaten.se/d/helsingborgs-stad/"))
+        let meals = Meals(service: school)
+        let d = Date().addingTimeInterval(60*60*24)
+        meals.publisher(for: d).sink { meals in
+            guard let meals = meals else {
+                return
+            }
+            XCTAssert(meals.contains { Calendar(identifier: Calendar.Identifier.gregorian).isDate($0.date, inSameDayAs: d)})
+            expectation.fulfill()
+        }.store(in: &cancellables)
+        wait(for: [expectation], timeout: 20.0)
+    }
     func testMashie() {
         let organization = "cb776b5e"
         let url = URL(string: "https://mpi.mashie.com/public/menu/helsingborg+vof/\(organization)?country=se")!
