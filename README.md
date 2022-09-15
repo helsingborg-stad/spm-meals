@@ -1,5 +1,8 @@
 # Meals
+## DEPRECATED
+Package will not recieve any updates, please use the Meals library in https://github.com/helsingborg-stad/spm-daisy instead.
 
+## About
 Meals provides a common interface for meal services implementing the `MealService` protocol.
 
 ## Usage 
